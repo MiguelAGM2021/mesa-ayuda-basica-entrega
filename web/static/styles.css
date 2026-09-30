@@ -1530,7 +1530,7 @@ a {
     radial-gradient(circle at 12% 18%, rgba(143, 187, 31, 0.45) 0%, transparent 38%),
     radial-gradient(circle at 88% 85%, rgba(143, 187, 31, 0.30) 0%, transparent 40%),
     linear-gradient(165deg, var(--cun-verde) 0%, #1B6E3D 45%, var(--teal) 100%);
-  animation: splash-salida 0.5s ease 2s forwards;
+  animation: splash-salida 0.5s ease 2.5s forwards;
 }
 
 .splash::before {
@@ -1562,7 +1562,7 @@ a {
   height: 100%;
   background: linear-gradient(90deg, var(--cun-lima), #FFFFFF);
   transform-origin: left;
-  animation: splash-carga 1.7s ease-in-out 0.2s both;
+  animation: splash-carga 2s ease-in-out 0.2s both;
 }
 
 .splash-pie {
@@ -1590,6 +1590,5 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .splash, .splash-logo, .splash-barra span { animation-duration: 0.01s; }
-  .splash { animation-delay: 0.8s; }
+  .splash-logo, .splash-barra span { animation: none; }
 }

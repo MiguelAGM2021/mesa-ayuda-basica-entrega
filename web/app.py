@@ -100,19 +100,24 @@ def personas_por_rol(rol):
     return []
 
 
+def pagina_principal(usuario):
+    if isinstance(usuario, TecnicoSoporte):
+        return url_for("panel_tecnico")
+    return url_for("panel")
+
+
 @app.context_processor
 def inject_usuario():
-    return {"usuario": obtener_usuario_actual()}
+    return {"usuario": obtener_usuario_actual(), "mostrar_splash": session.pop("mostrar_splash", False)}
 
 
 @app.route("/")
 def index():
+    session["mostrar_splash"] = True
     usuario = obtener_usuario_actual()
     if usuario is None:
         return redirect(url_for("elegir_usuario"))
-    if isinstance(usuario, TecnicoSoporte):
-        return redirect(url_for("panel_tecnico"))
-    return redirect(url_for("panel"))
+    return redirect(pagina_principal(usuario))
 
 
 @app.route("/elegir-usuario", methods=["GET", "POST"])
@@ -121,14 +126,13 @@ def elegir_usuario():
         usuario_id = request.form.get("usuario_id", "")
         if usuario_id.isdigit() and any(u.id == int(usuario_id) for u in usuarios):
             session["usuario_id"] = int(usuario_id)
-            return redirect(url_for("index"))
+            return redirect(pagina_principal(obtener_usuario_actual()))
         flash("Elegí un usuario de la lista.")
         return redirect(url_for("elegir_usuario"))
 
     rol = request.args.get("rol")
     if rol not in ETIQUETA_ROL:
-        mostrar_splash = not session.get("splash_visto", False)
-        session["splash_visto"] = True
+        mostrar_splash = request.args.get("desde") != "cambiar-perfil"
         return render_template("elegir_usuario.html", paso="rol", mostrar_splash=mostrar_splash)
 
     return render_template(

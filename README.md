@@ -78,14 +78,16 @@ mesa-ayuda-basica/
         ├── app.py
         │   ├── Configuración visual   CATEGORIAS, PRIORIDAD_COLOR, ETIQUETA_DETALLE
         │   ├── Funciones de apoyo     iniciales, estado_visual, formatear_fecha,
-        │   │                          obtener_usuario_actual, personas_por_rol
+        │   │                          obtener_usuario_actual, personas_por_rol,
+        │   │                          pagina_principal
         │   ├── Inicio de sesión       /elegir-usuario (perfiles de prueba), /cambiar-usuario
         │   ├── Panel alumno/profesor  /panel, /panel/nuevo-ticket
         │   ├── Panel técnico          /panel-tecnico, …/<id>/estado, …/<id>/asignar
         │   └── Usuarios               /usuarios, /usuarios/nuevo
         ├── templates/
         │   ├── base_app.html          encabezado común (logo CUN + ícono del proyecto)
-        │   ├── elegir_usuario.html    splash web + selección de perfil y usuario
+        │   ├── splash.html            pantalla de inicio web (se incluye al abrir la app)
+        │   ├── elegir_usuario.html    selección de perfil y usuario
         │   ├── panel.html             "Nuevo ticket" y "Mis tickets"
         │   ├── panel_tecnico.html     categorías, buscador, lista y detalle
         │   ├── usuarios.html          directorio de usuarios

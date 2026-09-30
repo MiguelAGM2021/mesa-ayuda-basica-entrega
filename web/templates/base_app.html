@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
 </head>
 <body>
+  {% if mostrar_splash %}{% include "splash.html" %}{% endif %}
   <div class="app">
     <header class="header">
       <div class="header-left">

@@ -12,13 +12,7 @@
 </head>
 <body>
 
-  {% if mostrar_splash %}
-  <div class="splash" aria-hidden="true">
-    <img src="{{ url_for('static', filename='logo-claro.svg') }}" alt="Mesa de Ayuda" class="splash-logo">
-    <div class="splash-barra"><span></span></div>
-    <p class="splash-pie">Corporación Unificada Nacional de Educación Superior — CUN</p>
-  </div>
-  {% endif %}
+  {% if mostrar_splash %}{% include "splash.html" %}{% endif %}
 
   <div class="login-fondo">
     <div class="hero-carousel" aria-hidden="true">
@@ -89,7 +83,7 @@
       </div>
       {% else %}
       <div class="login-paso">
-        <a class="login-volver" href="{{ url_for('elegir_usuario') }}">← Cambiar perfil</a>
+        <a class="login-volver" href="{{ url_for('elegir_usuario', desde='cambiar-perfil') }}">← Cambiar perfil</a>
         <p class="login-instruccion">Selecciona tu usuario ({{ etiqueta_rol }}):</p>
 
         <div class="login-lista-usuarios">
