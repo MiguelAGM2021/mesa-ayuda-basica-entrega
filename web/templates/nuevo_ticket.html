@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-4">Nuevo ticket</h1>
+<form method="post" novalidate>
+  <div class="mb-3">
+    <label class="form-label" for="tipo">Tipo de falla</label>
+    <select class="form-select" id="tipo" name="tipo" onchange="actualizarEtiquetaDetalle()" required>
+      <option value="" {% if not form.get("tipo") %}selected{% endif %}>Elegí un tipo</option>
+      <option value="red" {% if form.get("tipo") == "red" %}selected{% endif %}>Red</option>
+      <option value="hardware" {% if form.get("tipo") == "hardware" %}selected{% endif %}>Hardware</option>
+      <option value="software" {% if form.get("tipo") == "software" %}selected{% endif %}>Software</option>
+      <option value="cuenta" {% if form.get("tipo") == "cuenta" %}selected{% endif %}>Cuenta</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="titulo">Título</label>
+    <input class="form-control" id="titulo" name="titulo" value="{{ form.get('titulo', '') }}" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="descripcion">Descripción</label>
+    <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required>{{ form.get('descripcion', '') }}</textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" id="etiqueta-detalle" for="detalle_extra">Detalle</label>
+    <input class="form-control" id="detalle_extra" name="detalle_extra" value="{{ form.get('detalle_extra', '') }}" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="prioridad">Prioridad</label>
+    <select class="form-select" id="prioridad" name="prioridad">
+      <option value="Baja" {% if form.get("prioridad") == "Baja" %}selected{% endif %}>Baja</option>
+      <option value="Media" {% if form.get("prioridad", "Media") == "Media" %}selected{% endif %}>Media</option>
+      <option value="Alta" {% if form.get("prioridad") == "Alta" %}selected{% endif %}>Alta</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="usuario_reporta_id">¿Quién reporta el ticket?</label>
+    <select class="form-select" id="usuario_reporta_id" name="usuario_reporta_id" required>
+      <option value="">Elegí un usuario</option>
+      {% for u in usuarios %}
+      <option value="{{ u.id }}" {% if form.get("usuario_reporta_id") == u.id|string %}selected{% endif %}>{{ u.nombre }} ({{ u.obtener_rol() }})</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="btn btn-primary" type="submit">Crear ticket</button>
+</form>
+
+<script>
+function actualizarEtiquetaDetalle() {
+  var etiquetas = {red: "Zona afectada", hardware: "Equipo afectado", software: "Programa afectado", cuenta: "Tipo de cuenta"};
+  var tipo = document.getElementById("tipo").value;
+  document.getElementById("etiqueta-detalle").textContent = etiquetas[tipo] || "Detalle";
+}
+</script>
+{% endblock %}

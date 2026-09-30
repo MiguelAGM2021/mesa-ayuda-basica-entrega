@@ -1,0 +1,15 @@
+body {
+  padding-bottom: 2rem;
+}
+
+.badge {
+  color: #fff;
+}
+
+.estado-abierto { background-color: #0d6efd; }
+.estado-en-proceso { background-color: #fd7e14; }
+.estado-cerrado { background-color: #198754; }
+
+.prioridad-baja { background-color: #6c757d; }
+.prioridad-media { background-color: #0dcaf0; color: #212529; }
+.prioridad-alta { background-color: #dc3545; }

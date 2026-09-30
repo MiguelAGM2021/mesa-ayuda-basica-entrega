@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-4">Registrar usuario</h1>
+<form method="post">
+  <div class="mb-3">
+    <label class="form-label" for="rol">Rol</label>
+    <select class="form-select" id="rol" name="rol" required>
+      <option value="" {% if not form.get("rol") %}selected{% endif %}>Elegí un rol</option>
+      <option value="estudiante" {% if form.get("rol") == "estudiante" %}selected{% endif %}>Estudiante</option>
+      <option value="docente" {% if form.get("rol") == "docente" %}selected{% endif %}>Docente</option>
+      <option value="tecnico" {% if form.get("rol") == "tecnico" %}selected{% endif %}>Técnico de soporte</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="nombre">Nombre</label>
+    <input class="form-control" id="nombre" name="nombre" value="{{ form.get('nombre', '') }}" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="correo">Correo</label>
+    <input class="form-control" type="email" id="correo" name="correo" value="{{ form.get('correo', '') }}" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="dato_extra">Carrera / Facultad / Especialidad (según el rol)</label>
+    <input class="form-control" id="dato_extra" name="dato_extra" value="{{ form.get('dato_extra', '') }}" required>
+  </div>
+  <button class="btn btn-primary" type="submit">Registrar</button>
+</form>
+{% endblock %}

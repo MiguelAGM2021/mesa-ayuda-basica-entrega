@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-4">Elegí con qué usuario entrás</h1>
+<div class="row row-cols-1 row-cols-md-2 g-3">
+  {% for u in usuarios %}
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">{{ u.nombre }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ u.obtener_rol() }}</h6>
+        <p class="card-text">{{ u.correo }}</p>
+        <form method="post">
+          <input type="hidden" name="usuario_id" value="{{ u.id }}">
+          <button class="btn btn-primary" type="submit">Entrar como {{ u.nombre }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
