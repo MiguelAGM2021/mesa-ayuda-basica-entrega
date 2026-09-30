@@ -13,3 +13,65 @@ body {
 .prioridad-baja { background-color: #6c757d; }
 .prioridad-media { background-color: #0dcaf0; color: #212529; }
 .prioridad-alta { background-color: #dc3545; }
+
+.navbar-icono {
+  width: 34px;
+  height: 34px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  background-color: #fff;
+  animation: splash-salida 0.5s ease 2s forwards;
+}
+
+.splash-logo {
+  width: min(560px, 82vw);
+  animation: splash-entrada 0.7s ease-out both;
+}
+
+.splash-barra {
+  width: min(320px, 60vw);
+  height: 6px;
+  border-radius: 3px;
+  background-color: #e9ecef;
+  overflow: hidden;
+}
+
+.splash-barra span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #0d6efd, #fd7e14, #198754);
+  transform-origin: left;
+  animation: splash-carga 1.7s ease-in-out 0.2s both;
+}
+
+@keyframes splash-entrada {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes splash-carga {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes splash-salida {
+  to { opacity: 0; visibility: hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash, .splash-logo, .splash-barra span { animation-duration: 0.01s; }
+  .splash { animation-delay: 0.8s; }
+}

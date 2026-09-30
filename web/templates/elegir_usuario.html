@@ -1,4 +1,12 @@
 {% extends "base.html" %}
+{% block splash %}
+{% if mostrar_splash %}
+<div class="splash" aria-hidden="true">
+  <img src="{{ url_for('static', filename='logo.svg') }}" alt="Mesa de Ayuda" class="splash-logo">
+  <div class="splash-barra"><span></span></div>
+</div>
+{% endif %}
+{% endblock %}
 {% block content %}
 <h1 class="mb-4">Elegí con qué usuario entrás</h1>
 <div class="row row-cols-1 row-cols-md-2 g-3">

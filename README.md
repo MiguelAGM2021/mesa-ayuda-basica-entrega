@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="web/static/logo.svg" alt="Mesa de Ayuda" width="520">
+</p>
+
 # Mesa de Ayuda — Versión Básica
 
 Sistema de gestión de tickets de fallas técnicas para la universidad,
@@ -67,13 +71,14 @@ mesa-ayuda-basica/
 │       └── cargar_datos()    ← lee datos.json
 │
 └── INTERFAZ (puntos de entrada)
-    ├── main.py               menú por consola (main)
+    ├── splash.py             pantalla de inicio en consola (logo + barra de carga)
+    ├── main.py               muestra el splash y luego el menú por consola (main)
     └── web/                  interfaz web, usa las mismas clases
         ├── app.py            rutas Flask: /elegir-usuario, /tickets, /tickets/nuevo,
         │                     /tickets/<id>, /usuarios, /usuarios/nuevo
         ├── templates/        base, elegir_usuario, tickets, ticket_detalle,
         │                     nuevo_ticket, usuarios, nuevo_usuario
-        └── static/           styles.css
+        └── static/           styles.css, logo.svg, icono.svg
 ```
 
 MODELO, SERVICIOS e INTERFAZ son una agrupación lógica: los archivos `.py`
@@ -95,7 +100,8 @@ Solo necesita Python 3:
 python main.py
 ```
 
-La primera vez se cargan usuarios y tickets de ejemplo. Al elegir
+Al iniciar aparece la pantalla de bienvenida con el logo y una barra de
+carga. La primera vez se cargan usuarios y tickets de ejemplo. Al elegir
 "Guardar y salir" (opción 0) todo queda guardado en `datos.json` y se
 recupera la próxima vez.
 
@@ -106,6 +112,6 @@ pip install -r requirements.txt
 python web/app.py
 ```
 
-Luego abrir `http://127.0.0.1:5000` en el navegador y elegir un usuario
-de la lista para entrar. La versión web usa las mismas clases y el mismo
+Luego abrir `http://127.0.0.1:5000` en el navegador: se muestra el logo
+unos segundos y después se elige un usuario de la lista para entrar. La versión web usa las mismas clases y el mismo
 `datos.json` que la consola, así que ambas muestran la misma información.

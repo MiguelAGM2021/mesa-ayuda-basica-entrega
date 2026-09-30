@@ -42,7 +42,9 @@ def elegir_usuario():
             session["usuario_id"] = int(usuario_id)
             return redirect(url_for("index"))
         flash("Elegí un usuario de la lista.")
-    return render_template("elegir_usuario.html", usuarios=usuarios)
+    mostrar_splash = not session.get("splash_visto", False)
+    session["splash_visto"] = True
+    return render_template("elegir_usuario.html", usuarios=usuarios, mostrar_splash=mostrar_splash)
 
 
 @app.route("/cambiar-usuario", methods=["POST"])

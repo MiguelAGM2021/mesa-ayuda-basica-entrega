@@ -6,6 +6,7 @@ if hasattr(sys.stdout, "reconfigure"):
 from usuario import TecnicoSoporte, crear_usuario
 from ticket import crear_ticket
 from datos import cargar_datos, guardar_datos
+from splash import mostrar_splash
 
 TIPOS_TICKET = {
     "1": ("red", "Red", "Zona afectada"),
@@ -173,9 +174,8 @@ def opcion_registrar_usuario(usuarios):
 
 
 def main():
+    mostrar_splash()
     sistema, usuarios = cargar_datos()
-    print("=== Sistema de Gestión de Tickets de Fallas — Universidad ===")
-    print("(versión 100% básica en Python, sin base de datos ni hosting)")
 
     while True:
         mostrar_menu()
