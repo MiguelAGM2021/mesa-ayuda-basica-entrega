@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block titulo_pagina %}Mesa de Ayuda{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icono.svg') }}" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-left">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/7/76/Logo_CUN_EXTERNOS_Logo_Corporacion_unificada_nacional_color.png"
+          alt="CUN" class="cun-logo cun-logo-header"
+          onerror="this.style.display='none';"
+        />
+        <img src="{{ url_for('static', filename='icono.svg') }}" alt="" class="logo-proyecto" />
+        <div>
+          <h1 class="titulo">{% block titulo %}Mesa de Ayuda{% endblock %}</h1>
+          <p class="subtitulo">{% block subtitulo %}{% endblock %}</p>
+        </div>
+      </div>
+      <div class="header-acciones">
+        {% block header_extra %}{% endblock %}
+        <div class="usuario-conectado">
+          <span class="usuario-conectado-nombre">{{ usuario.nombre }} · {{ usuario.obtener_rol() }}</span>
+          <form method="post" action="{{ url_for('cambiar_usuario') }}" style="margin:0;">
+            <button class="btn-secundario" type="submit">Cerrar sesión</button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    {% with mensajes = get_flashed_messages() %}
+      {% if mensajes %}
+      <div style="max-width:720px; margin:14px auto 0; width:100%; padding:0 24px;">
+        {% for mensaje in mensajes %}
+        <p class="modal-error">{{ mensaje }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

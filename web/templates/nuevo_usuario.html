@@ -1,28 +1,48 @@
-{% extends "base.html" %}
+{% extends "base_app.html" %}
+{% block titulo_pagina %}Mesa de Ayuda — Registrar usuario{% endblock %}
+{% block titulo %}Mesa de Ayuda — Registrar usuario{% endblock %}
+{% block subtitulo %}Alta de un nuevo alumno, profesor o técnico{% endblock %}
+
 {% block content %}
-<h1 class="mb-4">Registrar usuario</h1>
-<form method="post">
-  <div class="mb-3">
-    <label class="form-label" for="rol">Rol</label>
-    <select class="form-select" id="rol" name="rol" required>
-      <option value="" {% if not form.get("rol") %}selected{% endif %}>Elegí un rol</option>
-      <option value="estudiante" {% if form.get("rol") == "estudiante" %}selected{% endif %}>Estudiante</option>
-      <option value="docente" {% if form.get("rol") == "docente" %}selected{% endif %}>Docente</option>
-      <option value="tecnico" {% if form.get("rol") == "tecnico" %}selected{% endif %}>Técnico de soporte</option>
-    </select>
-  </div>
-  <div class="mb-3">
-    <label class="form-label" for="nombre">Nombre</label>
-    <input class="form-control" id="nombre" name="nombre" value="{{ form.get('nombre', '') }}" required>
-  </div>
-  <div class="mb-3">
-    <label class="form-label" for="correo">Correo</label>
-    <input class="form-control" type="email" id="correo" name="correo" value="{{ form.get('correo', '') }}" required>
-  </div>
-  <div class="mb-3">
-    <label class="form-label" for="dato_extra">Carrera / Facultad / Especialidad (según el rol)</label>
-    <input class="form-control" id="dato_extra" name="dato_extra" value="{{ form.get('dato_extra', '') }}" required>
-  </div>
-  <button class="btn btn-primary" type="submit">Registrar</button>
-</form>
+<main class="panel-contenido">
+  <section class="panel-seccion">
+    <form method="post" class="form-panel">
+      <span class="form-sello">CUN · ALTA</span>
+
+      <div class="form-grupo">
+        <p class="form-grupo-titulo">Datos de la persona</p>
+
+        <label class="campo">
+          <span class="campo-etiqueta">Rol</span>
+          <select name="rol">
+            <option value="" {% if not form.get("rol") %}selected{% endif %}>Elegí un rol</option>
+            <option value="estudiante" {% if form.get("rol") == "estudiante" %}selected{% endif %}>Estudiante</option>
+            <option value="docente" {% if form.get("rol") == "docente" %}selected{% endif %}>Docente</option>
+            <option value="tecnico" {% if form.get("rol") == "tecnico" %}selected{% endif %}>Técnico de soporte</option>
+          </select>
+        </label>
+
+        <div class="fila-dos">
+          <label class="campo">
+            <span class="campo-etiqueta">Nombre</span>
+            <input type="text" name="nombre" value="{{ form.get('nombre', '') }}">
+          </label>
+          <label class="campo">
+            <span class="campo-etiqueta">Correo</span>
+            <input type="email" name="correo" value="{{ form.get('correo', '') }}">
+          </label>
+        </div>
+
+        <label class="campo">
+          <span class="campo-etiqueta">Carrera / Facultad / Especialidad (según el rol)</span>
+          <input type="text" name="dato_extra" value="{{ form.get('dato_extra', '') }}">
+        </label>
+      </div>
+
+      <div class="modal-acciones">
+        <button type="submit" class="btn-nuevo">Registrar</button>
+      </div>
+    </form>
+  </section>
+</main>
 {% endblock %}

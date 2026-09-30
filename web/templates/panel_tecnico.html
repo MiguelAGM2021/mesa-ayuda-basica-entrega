@@ -1,0 +1,139 @@
+{% extends "base_app.html" %}
+{% block titulo_pagina %}Mesa de Ayuda — Panel de Técnicos{% endblock %}
+{% block titulo %}Mesa de Ayuda — Panel de Técnicos{% endblock %}
+{% block subtitulo %}{{ activos }} tickets activos · {{ total }} en total{% endblock %}
+
+{% block header_extra %}
+<button class="btn-secundario" id="btn-toggle-sidebar" type="button" title="Mostrar u ocultar categorías">Categorías</button>
+{% endblock %}
+
+{% block content %}
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-cabecera-movil">
+      <p class="sidebar-titulo" style="margin:0;">CATEGORÍAS</p>
+      <button type="button" class="sidebar-cerrar-movil" id="btn-cerrar-sidebar" aria-label="Cerrar categorías">✕</button>
+    </div>
+    <p class="sidebar-titulo">CATEGORÍAS</p>
+
+    <a href="{{ url_for('panel_tecnico', tipo='todos', buscar=buscar) }}" class="filtro-item {{ 'activo' if tipo_actual == 'todos' else '' }}">
+      <span class="filtro-label"><span class="icono-punto" style="background-color: var(--ink);"></span>Todos</span>
+      <span class="contador">{{ conteo.todos }}</span>
+    </a>
+    {% for clave, cat in CATEGORIAS.items() %}
+    <a href="{{ url_for('panel_tecnico', tipo=clave, buscar=buscar) }}" class="filtro-item {{ 'activo' if tipo_actual == clave else '' }}">
+      <span class="filtro-label" style="color: {{ 'var(--ink)' if tipo_actual == clave else cat.color }}">
+        {{ cat.icono|safe }}
+        <span style="color: {{ 'var(--ink)' if tipo_actual == clave else 'var(--ink-soft)' }}">{{ cat.label }}</span>
+      </span>
+      <span class="contador">{{ conteo.get(clave, 0) }}</span>
+    </a>
+    {% endfor %}
+  </aside>
+
+  <main class="main">
+    <div class="buscador-wrap">
+      <form method="get">
+        <input type="hidden" name="tipo" value="{{ tipo_actual }}">
+        <input type="text" name="buscar" class="buscador" placeholder="Buscar por título..." value="{{ buscar }}" onchange="this.form.submit()">
+      </form>
+    </div>
+
+    <div class="lista-tickets">
+      {% if not tickets %}
+      <p class="sin-tickets">No hay tickets que coincidan con la búsqueda.</p>
+      {% endif %}
+      {% for t in tickets %}
+      {% set cat = CATEGORIAS[t.tipo] %}
+      {% set visual = t.estado|estado_visual %}
+      {% set activo = ticket_seleccionado and ticket_seleccionado.id == t.id %}
+      <a href="{{ url_for('panel_tecnico', tipo=tipo_actual, buscar=buscar, ticket=t.id) }}"
+         class="ticket-card {{ 'activo' if activo else '' }}"
+         style="border-color: {{ cat.color if activo else 'var(--line)' }}; display:block; text-decoration:none; color:inherit;">
+        <div class="ticket-top">
+          <div style="display:flex; align-items:flex-start; gap:12px; min-width:0;">
+            <div class="ticket-icono" style="background-color:{{ cat.soft }}; color:{{ cat.color }};">{{ cat.icono|safe }}</div>
+            <div style="min-width:0;">
+              <p class="ticket-id-fecha">#{{ "%03d"|format(t.id) }} · {{ t.fecha_creacion|fecha_es }}</p>
+              <p class="ticket-titulo">{{ t.titulo }}</p>
+              <p class="ticket-detalle-texto">{{ t.obtener_detalle() }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="ticket-footer">
+          <span class="{{ visual.clase }}" style="color:{{ visual.color }}; border-color:{{ visual.color }}; background-color:{{ visual.fondo }};">{{ visual.texto }}</span>
+          <span class="badge-prioridad" style="color:{{ PRIORIDAD_COLOR[t.prioridad] }};">PRIORIDAD {{ t.prioridad|upper }}</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </main>
+
+  <aside class="detalle {{ '' if ticket_seleccionado else 'colapsado' }}" id="detalle">
+    {% if ticket_seleccionado %}
+    {% set t = ticket_seleccionado %}
+    {% set cat = CATEGORIAS[t.tipo] %}
+    {% set visual = t.estado|estado_visual %}
+    <div class="detalle-top">
+      <div class="detalle-categoria" style="background-color:{{ cat.soft }}; color:{{ cat.color }};">{{ cat.icono|safe }} <span>{{ cat.label }}</span></div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span class="detalle-id">#{{ "%03d"|format(t.id) }}</span>
+        <a class="detalle-cerrar-movil" id="btn-cerrar-detalle" href="{{ url_for('panel_tecnico', tipo=tipo_actual, buscar=buscar) }}" aria-label="Cerrar detalle">✕</a>
+      </div>
+    </div>
+
+    <h2 class="detalle-titulo">{{ t.titulo }}</h2>
+    <p class="detalle-subtitulo">{{ t.obtener_detalle() }}</p>
+
+    <div style="margin-bottom:16px;">
+      <span class="{{ visual.clase }}" style="color:{{ visual.color }}; border-color:{{ visual.color }}; background-color:{{ visual.fondo }};">{{ visual.texto }}</span>
+    </div>
+
+    <p class="detalle-descripcion">{{ t.descripcion }}</p>
+
+    <div class="detalle-meta">Reportado por <strong>{{ t.usuario_reporta.nombre }}</strong> ({{ t.usuario_reporta.obtener_rol() }})</div>
+    <div class="detalle-meta">{{ t.fecha_creacion|fecha_es }}</div>
+    {% if t.tecnico_asignado %}<div class="detalle-meta">Técnico: <strong>{{ t.tecnico_asignado.nombre }}</strong></div>{% endif %}
+
+    <p class="detalle-seccion-titulo">CAMBIAR ESTADO</p>
+    <div class="chips">
+      {% for e in ["Abierto", "En proceso", "Cerrado"] %}
+      <form method="post" action="{{ url_for('cambiar_estado_ticket', ticket_id=t.id) }}" style="display:inline;">
+        <input type="hidden" name="estado" value="{{ e }}">
+        <input type="hidden" name="tipo" value="{{ tipo_actual }}">
+        <input type="hidden" name="buscar" value="{{ buscar }}">
+        <button type="submit" class="chip {{ 'activo-estado' if t.estado == e else '' }}">{{ e }}</button>
+      </form>
+      {% endfor %}
+    </div>
+
+    <p class="detalle-seccion-titulo">ASIGNAR TÉCNICO</p>
+    <div class="chips">
+      {% for tec in tecnicos %}
+      {% set asignado = t.tecnico_asignado and t.tecnico_asignado.id == tec.id %}
+      <form method="post" action="{{ url_for('asignar_tecnico_ticket', ticket_id=t.id) }}" style="display:inline;">
+        <input type="hidden" name="tecnico_id" value="{{ tec.id }}">
+        <input type="hidden" name="tipo" value="{{ tipo_actual }}">
+        <input type="hidden" name="buscar" value="{{ buscar }}">
+        <button type="submit" class="chip {{ 'activo-tecnico' if asignado else '' }}"
+          style="{% if asignado %}background-color:{{ cat.soft }}; color:{{ cat.color }}; border-color:{{ cat.color }};{% endif %}">
+          {{ tec.nombre }}
+        </button>
+      </form>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </aside>
+
+</div>
+
+<script>
+document.getElementById("btn-toggle-sidebar").addEventListener("click", function () {
+  document.getElementById("sidebar").classList.toggle("colapsado");
+});
+document.getElementById("btn-cerrar-sidebar")?.addEventListener("click", function () {
+  document.getElementById("sidebar").classList.add("colapsado");
+});
+</script>
+{% endblock %}

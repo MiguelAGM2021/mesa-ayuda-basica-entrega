@@ -1,0 +1,143 @@
+{% extends "base_app.html" %}
+{% block titulo_pagina %}Mesa de Ayuda — Mi Panel{% endblock %}
+{% block titulo %}Mesa de Ayuda — Mi Panel{% endblock %}
+{% block subtitulo %}Reporta fallas y revisa el estado de tus tickets{% endblock %}
+
+{% block content %}
+<div class="panel-tabs">
+  <a href="{{ url_for('panel', tab='nuevo') }}" class="panel-tab {{ 'activo' if tab == 'nuevo' else '' }}">
+    <span class="panel-tab-icono"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+    <span>Nuevo ticket</span>
+  </a>
+  <a href="{{ url_for('panel', tab='mis-tickets') }}" class="panel-tab {{ 'activo' if tab == 'mis-tickets' else '' }}">
+    <span class="panel-tab-icono"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></span>
+    <span>Mis tickets</span>
+  </a>
+</div>
+
+<main class="panel-contenido">
+
+  {% if tab == "nuevo" %}
+  <section class="panel-seccion">
+    <form method="post" action="{{ url_for('panel_nuevo_ticket') }}" class="form-panel">
+      <span class="form-sello">CUN · RADICADO</span>
+
+      <div class="form-grupo">
+        <p class="form-grupo-titulo">¿Qué está pasando?</p>
+
+        <div class="fila-dos">
+          <label class="campo">
+            <span class="campo-etiqueta">Título</span>
+            <input type="text" name="titulo" value="{{ form.get('titulo', '') }}" placeholder="Ej: No enciende el proyector">
+          </label>
+
+          <label class="campo">
+            <span class="campo-etiqueta">Categoría</span>
+            <select name="tipo" id="campo-tipo" onchange="actualizarEtiquetaDetalle()">
+              {% for clave, cat in CATEGORIAS.items() %}
+              <option value="{{ clave }}" {% if form.get('tipo', 'red') == clave %}selected{% endif %}>{{ cat.label }}</option>
+              {% endfor %}
+            </select>
+          </label>
+        </div>
+
+        <div class="categorias-leyenda">
+          {% for clave, cat in CATEGORIAS.items() %}
+          <span class="leyenda-item"><span class="leyenda-punto" style="background-color: {{ cat.color }};"></span>{{ cat.label }}</span>
+          {% endfor %}
+        </div>
+
+        <label class="campo">
+          <span class="campo-etiqueta" id="etiqueta-detalle">{{ etiquetas_detalle.get(form.get('tipo', 'red')) }}</span>
+          <input type="text" name="detalle_extra" id="campo-detalle" value="{{ form.get('detalle_extra', '') }}">
+        </label>
+      </div>
+
+      <hr class="form-divisor">
+
+      <div class="form-grupo">
+        <p class="form-grupo-titulo">Cuéntanos más</p>
+
+        <label class="campo">
+          <span class="campo-etiqueta">Descripción</span>
+          <textarea name="descripcion" rows="3" placeholder="Describe la falla con más detalle...">{{ form.get('descripcion', '') }}</textarea>
+        </label>
+
+        <div class="fila-dos">
+          <label class="campo">
+            <span class="campo-etiqueta">Prioridad</span>
+            <select name="prioridad">
+              <option value="Baja" {% if form.get('prioridad') == 'Baja' %}selected{% endif %}>Baja</option>
+              <option value="Media" {% if form.get('prioridad', 'Media') == 'Media' %}selected{% endif %}>Media</option>
+              <option value="Alta" {% if form.get('prioridad') == 'Alta' %}selected{% endif %}>Alta</option>
+            </select>
+          </label>
+
+          <label class="campo">
+            <span class="campo-etiqueta">Reportado por</span>
+            <select name="usuario_reporta_id">
+              {% for u in usuarios %}
+              <option value="{{ u.id }}" {% if form.get('usuario_reporta_id', usuario.id|string) == u.id|string %}selected{% endif %}>{{ u.nombre }} ({{ u.obtener_rol() }})</option>
+              {% endfor %}
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-acciones">
+        <button type="submit" class="btn-nuevo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6"/></svg>
+          Crear ticket
+        </button>
+      </div>
+    </form>
+  </section>
+  {% else %}
+  <section class="panel-seccion">
+    <div class="mis-tickets-header">
+      <p class="mis-tickets-eyebrow">TUS RADICADOS</p>
+      <p class="mis-tickets-sub">Consulta el estado de las fallas que has reportado.</p>
+    </div>
+    <div class="lista-tickets">
+      {% if not mis_tickets %}
+      <p class="sin-tickets">Todavía no has generado ningún ticket.</p>
+      {% endif %}
+      {% for t in mis_tickets %}
+      {% set cat = CATEGORIAS[t.tipo] %}
+      {% set visual = t.estado|estado_visual %}
+      <div class="ticket-card">
+        <div class="ticket-top">
+          <div style="display:flex; align-items:flex-start; gap:12px; min-width:0;">
+            <div class="ticket-icono" style="background-color:{{ cat.soft }}; color:{{ cat.color }};">{{ cat.icono|safe }}</div>
+            <div style="min-width:0;">
+              <p class="ticket-id-fecha">#{{ "%03d"|format(t.id) }} · {{ t.fecha_creacion|fecha_es }}</p>
+              <p class="ticket-titulo">{{ t.titulo }}</p>
+              <p class="ticket-detalle-texto">{{ t.obtener_detalle() }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="ticket-footer">
+          <span class="{{ visual.clase }}" style="color:{{ visual.color }}; border-color:{{ visual.color }}; background-color:{{ visual.fondo }};">{{ visual.texto }}</span>
+          <span class="badge-prioridad" style="color:{{ PRIORIDAD_COLOR[t.prioridad] }};">PRIORIDAD {{ t.prioridad|upper }}</span>
+          {% if t.tecnico_asignado %}<span class="badge-prioridad">TÉCNICO: {{ t.tecnico_asignado.nombre }}</span>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+</main>
+
+<script>
+function actualizarEtiquetaDetalle() {
+  var etiquetas = {
+    red: "Zona afectada (ej: Bloque C · Lab 3)",
+    hardware: "Equipo afectado (ej: PC-Lab3-05)",
+    software: "Programa afectado (ej: Sistema Académico)",
+    cuenta: "Tipo de cuenta (ej: Correo institucional)"
+  };
+  document.getElementById("etiqueta-detalle").textContent = etiquetas[document.getElementById("campo-tipo").value];
+}
+</script>
+{% endblock %}

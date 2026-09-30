@@ -1,29 +1,119 @@
-{% extends "base.html" %}
-{% block splash %}
-{% if mostrar_splash %}
-<div class="splash" aria-hidden="true">
-  <img src="{{ url_for('static', filename='logo.svg') }}" alt="Mesa de Ayuda" class="splash-logo">
-  <div class="splash-barra"><span></span></div>
-</div>
-{% endif %}
-{% endblock %}
-{% block content %}
-<h1 class="mb-4">Elegí con qué usuario entrás</h1>
-<div class="row row-cols-1 row-cols-md-2 g-3">
-  {% for u in usuarios %}
-  <div class="col">
-    <div class="card h-100">
-      <div class="card-body">
-        <h5 class="card-title">{{ u.nombre }}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">{{ u.obtener_rol() }}</h6>
-        <p class="card-text">{{ u.correo }}</p>
-        <form method="post">
-          <input type="hidden" name="usuario_id" value="{{ u.id }}">
-          <button class="btn btn-primary" type="submit">Entrar como {{ u.nombre }}</button>
-        </form>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mesa de Ayuda — Iniciar sesión</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icono.svg') }}" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+
+  {% if mostrar_splash %}
+  <div class="splash" aria-hidden="true">
+    <img src="{{ url_for('static', filename='logo-claro.svg') }}" alt="Mesa de Ayuda" class="splash-logo">
+    <div class="splash-barra"><span></span></div>
+    <p class="splash-pie">Corporación Unificada Nacional de Educación Superior — CUN</p>
+  </div>
+  {% endif %}
+
+  <div class="login-fondo">
+    <div class="hero-carousel" aria-hidden="true">
+      <div class="hero-base"></div>
+      <div class="hero-slide hero-slide-1">
+        <div class="hero-slide-art hero-slide-art-1"></div>
+        <img src="https://images.unsplash.com/photo-1667273705349-050fd83d07d3?w=1600&q=80&fm=jpg&fit=crop&auto=format" alt="" onerror="this.style.display='none'">
       </div>
+      <div class="hero-slide hero-slide-2">
+        <div class="hero-slide-art hero-slide-art-2"></div>
+        <img src="https://images.unsplash.com/photo-1576495199011-eb94736d05d6?w=1600&q=80&fm=jpg&fit=crop&auto=format" alt="" onerror="this.style.display='none'">
+      </div>
+      <div class="hero-slide hero-slide-3">
+        <div class="hero-slide-art hero-slide-art-3"></div>
+        <img src="https://images.unsplash.com/photo-1758270705290-62b6294dd044?w=1600&q=80&fm=jpg&fit=crop&auto=format" alt="" onerror="this.style.display='none'">
+      </div>
+      <div class="hero-slide hero-slide-4">
+        <div class="hero-slide-art hero-slide-art-4"></div>
+        <img src="https://images.unsplash.com/photo-1758270705518-b61b40527e76?w=1600&q=80&fm=jpg&fit=crop&auto=format" alt="" onerror="this.style.display='none'">
+      </div>
+      <div class="hero-overlay"></div>
+    </div>
+
+    <div class="login-blob login-blob-1"></div>
+    <div class="login-blob login-blob-2"></div>
+
+    <div class="login-wrap">
+
+      <div class="login-banner">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/7/76/Logo_CUN_EXTERNOS_Logo_Corporacion_unificada_nacional_color.png"
+          alt="CUN" class="cun-logo"
+          onerror="this.style.display='none';"
+        />
+        <div>
+          <h1 class="login-titulo">Mesa de Ayuda</h1>
+          <p class="login-subtitulo">Sistema Universitario · Proyecto CUN</p>
+        </div>
+      </div>
+
+      <div class="login-caja">
+
+      {% if paso == "rol" %}
+      <div class="login-paso">
+        <p class="login-bienvenida">¡Bienvenido!</p>
+        <p class="login-instruccion">Selecciona tu perfil para ingresar:</p>
+
+        <div class="login-roles">
+          <a class="login-rol-btn rol-estudiante" href="{{ url_for('elegir_usuario', rol='estudiante') }}">
+            <span class="login-rol-icono">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 9.5 12 4.5 2 9.5l10 5 10-5Z"/><path d="M6 11.7v4.8c0 1.4 2.6 2.8 6 2.8s6-1.4 6-2.8v-4.8"/><path d="M22 9.5v6.2"/></svg>
+            </span>
+            <span>Soy Alumno</span>
+          </a>
+          <a class="login-rol-btn rol-profesor" href="{{ url_for('elegir_usuario', rol='docente') }}">
+            <span class="login-rol-icono">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="12.5" rx="1.5"/><path d="M8.5 20.5h7M12 17v3.5"/><path d="M6.5 12.5 10 9l2.2 2 3.3-3.5"/></svg>
+            </span>
+            <span>Soy Profesor</span>
+          </a>
+          <a class="login-rol-btn rol-tecnico" href="{{ url_for('elegir_usuario', rol='tecnico') }}">
+            <span class="login-rol-icono">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.35 5.02L4 16.7V20h3.3l5.38-5.35A4 4 0 0 0 17.7 9.3l-2.62 2.62-2.02-.58-.58-2.02 2.62-2.62Z"/></svg>
+            </span>
+            <span>Soy Técnico</span>
+          </a>
+        </div>
+      </div>
+      {% else %}
+      <div class="login-paso">
+        <a class="login-volver" href="{{ url_for('elegir_usuario') }}">← Cambiar perfil</a>
+        <p class="login-instruccion">Selecciona tu usuario ({{ etiqueta_rol }}):</p>
+
+        <div class="login-lista-usuarios">
+          {% for p in personas %}
+          <form method="post" style="margin:0;">
+            <input type="hidden" name="usuario_id" value="{{ p.id }}">
+            <button type="submit" class="login-usuario-item">
+              <span class="login-avatar login-avatar-{{ rol_css }}">{{ p.nombre|iniciales }}</span>
+              <span class="login-usuario-info">
+                <span class="login-usuario-nombre">{{ p.nombre }}</span>
+                <span class="login-usuario-detalle">{{ p.obtener_rol() }} · {{ p.correo }}</span>
+              </span>
+            </button>
+          </form>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      </div>
+
+      <p class="login-footer">Corporación Unificada Nacional de Educación Superior — CUN</p>
     </div>
   </div>
-  {% endfor %}
-</div>
-{% endblock %}
+
+</body>
+</html>

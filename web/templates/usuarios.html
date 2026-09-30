@@ -1,19 +1,33 @@
-{% extends "base.html" %}
+{% extends "base_app.html" %}
+{% block titulo_pagina %}Mesa de Ayuda — Usuarios{% endblock %}
+{% block titulo %}Mesa de Ayuda — Usuarios{% endblock %}
+{% block subtitulo %}Alumnos, profesores y técnicos registrados{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="mb-0">Usuarios</h1>
-  <a class="btn btn-primary" href="{{ url_for('nuevo_usuario') }}">Registrar usuario</a>
-</div>
-<table class="table table-hover align-middle">
-  <thead><tr><th>Nombre</th><th>Rol</th><th>Correo</th></tr></thead>
-  <tbody>
-    {% for u in usuarios %}
-    <tr>
-      <td>{{ u.nombre }}</td>
-      <td>{{ u.obtener_rol() }}</td>
-      <td>{{ u.correo }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<main class="panel-contenido">
+  <section class="panel-seccion">
+    <div class="mis-tickets-header" style="display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <p class="mis-tickets-eyebrow">DIRECTORIO</p>
+        <p class="mis-tickets-sub">Personas con acceso al sistema.</p>
+      </div>
+      <a class="btn-nuevo" href="{{ url_for('nuevo_usuario') }}">Registrar usuario</a>
+    </div>
+    <div class="lista-tickets">
+      {% for u in usuarios %}
+      <div class="ticket-card">
+        <div class="ticket-top">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span class="login-avatar login-avatar-{{ 'profesor' if u.obtener_rol() == 'Docente' else ('tecnico' if u.obtener_rol() == 'Técnico de Soporte' else 'estudiante') }}">{{ u.nombre|iniciales }}</span>
+            <div>
+              <p class="ticket-titulo">{{ u.nombre }}</p>
+              <p class="ticket-detalle-texto">{{ u.obtener_rol() }} · {{ u.correo }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</main>
 {% endblock %}

@@ -73,12 +73,12 @@ mesa-ayuda-basica/
 └── INTERFAZ (puntos de entrada)
     ├── splash.py             pantalla de inicio en consola (logo + barra de carga)
     ├── main.py               muestra el splash y luego el menú por consola (main)
-    └── web/                  interfaz web, usa las mismas clases
-        ├── app.py            rutas Flask: /elegir-usuario, /tickets, /tickets/nuevo,
-        │                     /tickets/<id>, /usuarios, /usuarios/nuevo
-        ├── templates/        base, elegir_usuario, tickets, ticket_detalle,
-        │                     nuevo_ticket, usuarios, nuevo_usuario
-        └── static/           styles.css, logo.svg, icono.svg
+    └── web/                  interfaz web con la identidad visual CUN, usa las mismas clases
+        ├── app.py            rutas Flask: /elegir-usuario (perfiles de prueba),
+        │                     /panel (alumno y profesor), /panel-tecnico, /usuarios
+        ├── templates/        base_app, elegir_usuario, panel, panel_tecnico,
+        │                     usuarios, nuevo_usuario
+        └── static/           styles.css, logo.svg, logo-claro.svg, icono.svg
 ```
 
 MODELO, SERVICIOS e INTERFAZ son una agrupación lógica: los archivos `.py`
@@ -88,7 +88,7 @@ están en la raíz del proyecto.
 
 - **Python 3** (librería estándar: `json`, `datetime`)
 - **Flask** para la interfaz web
-- **Bootstrap 5** para el diseño de las páginas
+- **HTML y CSS propios** con la identidad visual de la CUN (verde institucional y lima)
 
 ## Cómo ejecutarlo
 
@@ -112,6 +112,15 @@ pip install -r requirements.txt
 python web/app.py
 ```
 
-Luego abrir `http://127.0.0.1:5000` en el navegador: se muestra el logo
-unos segundos y después se elige un usuario de la lista para entrar. La versión web usa las mismas clases y el mismo
-`datos.json` que la consola, así que ambas muestran la misma información.
+Luego abrir `http://127.0.0.1:5000` en el navegador. Primero aparece la
+pantalla de inicio con el logo sobre el fondo verde institucional de la CUN;
+después se elige un perfil de prueba (Alumno, Profesor o Técnico) y un
+usuario de la lista, sin contraseña ni registro:
+
+- **Alumno y Profesor:** reportan fallas desde "Nuevo ticket" y revisan el
+  estado de sus tickets en "Mis tickets".
+- **Técnico:** ve todos los tickets por categoría, busca por título, cambia
+  el estado y asigna técnicos desde el panel de detalle.
+
+La versión web usa las mismas clases y el mismo `datos.json` que la
+consola, así que ambas muestran la misma información.
