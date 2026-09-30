@@ -72,17 +72,61 @@ mesa-ayuda-basica/
 │
 └── INTERFAZ (puntos de entrada)
     ├── splash.py             pantalla de inicio en consola (logo + barra de carga)
-    ├── main.py               muestra el splash y luego el menú por consola (main)
-    └── web/                  interfaz web con la identidad visual CUN, usa las mismas clases
-        ├── app.py            rutas Flask: /elegir-usuario (perfiles de prueba),
-        │                     /panel (alumno y profesor), /panel-tecnico, /usuarios
-        ├── templates/        base_app, elegir_usuario, panel, panel_tecnico,
-        │                     usuarios, nuevo_usuario
-        └── static/           styles.css, logo.svg, logo-claro.svg, icono.svg
+    ├── main.py               muestra el splash y luego el menú por consola
+    │
+    └── web/                  interfaz web con la identidad visual CUN (Flask)
+        ├── app.py
+        │   ├── Configuración visual   CATEGORIAS, PRIORIDAD_COLOR, ETIQUETA_DETALLE
+        │   ├── Funciones de apoyo     iniciales, estado_visual, formatear_fecha,
+        │   │                          obtener_usuario_actual, personas_por_rol
+        │   ├── Inicio de sesión       /elegir-usuario (perfiles de prueba), /cambiar-usuario
+        │   ├── Panel alumno/profesor  /panel, /panel/nuevo-ticket
+        │   ├── Panel técnico          /panel-tecnico, …/<id>/estado, …/<id>/asignar
+        │   └── Usuarios               /usuarios, /usuarios/nuevo
+        ├── templates/
+        │   ├── base_app.html          encabezado común (logo CUN + ícono del proyecto)
+        │   ├── elegir_usuario.html    splash web + selección de perfil y usuario
+        │   ├── panel.html             "Nuevo ticket" y "Mis tickets"
+        │   ├── panel_tecnico.html     categorías, buscador, lista y detalle
+        │   ├── usuarios.html          directorio de usuarios
+        │   └── nuevo_usuario.html     registro de usuario
+        └── static/
+            ├── styles.css             diseño institucional CUN + estilos del splash
+            ├── logo.svg               logo del proyecto
+            ├── logo-claro.svg         versión clara para el fondo verde del splash
+            └── icono.svg              ícono (pestaña del navegador y encabezado)
 ```
 
 MODELO, SERVICIOS e INTERFAZ son una agrupación lógica: los archivos `.py`
 están en la raíz del proyecto.
+
+### Relación entre módulos
+
+```
+splash.py <── main.py ──────┐
+                            ├──> datos.py ──> sistema.py
+              web/app.py ───┘       │
+                 │                  └──> usuario.py, ticket.py
+                 └──> usuario.py, ticket.py
+```
+
+- `usuario.py` y `ticket.py` no importan ningún otro módulo del proyecto; son la base.
+- `sistema.py` tampoco importa nada: trabaja con los objetos `Ticket` que recibe.
+- `splash.py` solo lo usa `main.py`; no toca el modelo ni los datos.
+- `main.py` y `web/app.py` son independientes entre sí y comparten las mismas
+  clases y el mismo `datos.json`.
+
+### Cómo se reparte la lógica
+
+| Dónde | Qué lógica tiene |
+|---|---|
+| Clases del modelo | Reglas de cada objeto: cambiar estado, asignar técnico, mostrar su detalle (polimorfismo) |
+| `SistemaGestionTickets` | Manejo del conjunto de tickets: registrar, buscar, filtrar y contar |
+| `datos.py` | Guardar y cargar todo en `datos.json` |
+| `splash.py` | Solo presentación: logo y barra de carga al iniciar la consola |
+| `main.py` | Pedir datos por teclado y mostrar resultados en consola |
+| `web/app.py` | Recibir las acciones del navegador, llamar a las clases y elegir qué plantilla mostrar |
+| `templates/` y `static/` | Solo presentación visual (HTML y CSS), sin reglas del negocio |
 
 ## Tecnologías
 
