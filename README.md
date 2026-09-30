@@ -40,16 +40,44 @@ Cada ticket pasa por tres estados: **Abierto → En proceso → Cerrado**.
 
 ```
 mesa-ayuda-basica/
-├── usuario.py     clases Usuario, Estudiante, Docente, TecnicoSoporte
-├── ticket.py      clases Ticket, TicketRed, TicketHardware, TicketSoftware, TicketCuenta
-├── sistema.py     clase SistemaGestionTickets
-├── datos.py       datos de ejemplo y guardado/carga en datos.json
-├── main.py        menú por consola
-└── web/           interfaz web con Flask y Bootstrap 5
-    ├── app.py
-    ├── templates/
-    └── static/
+│
+├── MODELO (clases del dominio)
+│   ├── usuario.py
+│   │   ├── Usuario            clase base (id, nombre, correo)
+│   │   ├── Estudiante         hereda de Usuario (+ carrera)
+│   │   ├── Docente            hereda de Usuario (+ facultad)
+│   │   ├── TecnicoSoporte     hereda de Usuario (+ especialidad, resolver_ticket)
+│   │   └── crear_usuario()    fábrica: crea el usuario según el rol
+│   │
+│   └── ticket.py
+│       ├── Ticket             clase base (estado, prioridad, técnico asignado)
+│       ├── TicketRed          hereda de Ticket (+ zona afectada)
+│       ├── TicketHardware     hereda de Ticket (+ equipo afectado)
+│       ├── TicketSoftware     hereda de Ticket (+ programa afectado)
+│       ├── TicketCuenta       hereda de Ticket (+ tipo de cuenta)
+│       └── crear_ticket()     fábrica: crea el ticket según el tipo
+│
+├── SERVICIOS (lógica del sistema)
+│   ├── sistema.py
+│   │   └── SistemaGestionTickets   registrar, generar id, buscar,
+│   │                               filtrar por estado/tipo, contar
+│   └── datos.py                    persistencia
+│       ├── sembrar_datos_ejemplo()
+│       ├── guardar_datos()   → escribe datos.json
+│       └── cargar_datos()    ← lee datos.json
+│
+└── INTERFAZ (puntos de entrada)
+    ├── main.py               menú por consola (main)
+    └── web/                  interfaz web, usa las mismas clases
+        ├── app.py            rutas Flask: /elegir-usuario, /tickets, /tickets/nuevo,
+        │                     /tickets/<id>, /usuarios, /usuarios/nuevo
+        ├── templates/        base, elegir_usuario, tickets, ticket_detalle,
+        │                     nuevo_ticket, usuarios, nuevo_usuario
+        └── static/           styles.css
 ```
+
+MODELO, SERVICIOS e INTERFAZ son una agrupación lógica: los archivos `.py`
+están en la raíz del proyecto.
 
 ## Tecnologías
 
